@@ -2,14 +2,14 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Upload, X, CheckCircle2, AlertCircle, Building2 } from 'lucide-react';
+import { Upload, X, CheckCircle2, AlertCircle } from 'lucide-react';
 
 const FORM_PRODUCTS = [
-  'Personalized University Nameplates',
-  'Recycled-Plastic Trophies & Awards',
-  'Architectural Wall Installations',
-  'Custom Fluted Planters',
-  'Branded Studio Merchandise',
+  'Recycled-Material Nameplates',
+  'Upcycled Plastic Planters',
+  'Small Decorative Vases',
+  'Recycled-Plastic Trophies',
+  'Custom Wall Installations',
 ];
 
 export function WasteWorthFormSection() {
@@ -21,31 +21,44 @@ export function WasteWorthFormSection() {
   );
   const [designPreferences, setDesignPreferences] = useState('');
   const [budgetRange, setBudgetRange] = useState('');
+  const [specialInstructions, setSpecialInstructions] = useState('');
   const [contactName, setContactName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [city, setCity] = useState('');
-  const [logoDataUrl, setLogoDataUrl] = useState<string | undefined>(undefined);
+  const [logoPath, setLogoPath] = useState<string | undefined>(undefined);
   const [logoName, setLogoName] = useState<string | undefined>(undefined);
 
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [referenceNumber, setReferenceNumber] = useState<string | null>(null);
 
-  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 3 * 1024 * 1024) {
-      setErrorMsg('Logo file must be under 3 MB.');
+    setErrorMsg(null);
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setErrorMsg('Logo must be JPG, PNG, or WEBP.');
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      setLogoDataUrl(String(reader.result));
+    if (file.size > 4 * 1024 * 1024) {
+      setErrorMsg('Logo file must be under 4 MB.');
+      return;
+    }
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'logos');
+      const res = await fetch('/api/uploads', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Logo upload failed.');
+      setLogoPath(data.storagePath);
       setLogoName(file.name);
-    };
-    reader.readAsDataURL(file);
-    e.target.value = '';
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Logo upload failed.');
+    } finally {
+      e.target.value = '';
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -72,11 +85,12 @@ export function WasteWorthFormSection() {
           organizationName,
           productType,
           approximateQuantity,
-          logoDataUrl,
+          logoPath,
           logoName,
           colourPreferences,
           designPreferences,
           budgetRange,
+          specialInstructions,
           contactName,
           email,
           phone,
@@ -98,60 +112,46 @@ export function WasteWorthFormSection() {
   return (
     <section
       id="form-decor"
-      className="py-24 lg:py-32 ww-marble-panel text-ivory border-b border-gold/25"
+      className="py-20 lg:py-28 bg-teal-abyss text-ivory border-b border-gold/25"
     >
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+      <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          {/* Left Studio Showcase */}
-          <div className="lg:col-span-5 space-y-8">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 border border-gold/40 px-3.5 py-1.5 text-[10px] uppercase tracking-[0.28em] text-gold-light">
-                <Building2 className="w-3.5 h-3.5" />
-                03 // B2B &amp; Institutional Studio
-              </div>
+          <div className="lg:col-span-5 space-y-6">
+            <div className="space-y-3">
+              <p className="font-mono text-[11px] uppercase tracking-[0.26em] text-gold-light">
+                Institutional &amp; Décor Studio
+              </p>
               <h2 className="font-serif text-4xl sm:text-5xl text-ivory leading-[1.06]">
-                WASTEWORTH FORM —{' '}
+                WasteWorth Form —{' '}
                 <span className="italic text-gold-light font-normal">
                   Custom Décor
                 </span>
               </h2>
               <p className="text-ivory/75 leading-relaxed">
-                Designed for universities, design studios, cultural festivals,
-                and conscious institutions seeking custom architectural objects
-                crafted from reclaimed polymers.
+                For universities, studios, and events seeking recycled-material
+                nameplates, planters, vases, and custom installations.
               </p>
             </div>
 
-            <div className="relative aspect-[4/4.2] border border-gold/35 overflow-hidden bg-teal-abyss">
+            <div className="relative aspect-[4/3] border border-gold/30 overflow-hidden">
               <Image
-                src="/images/product-decor-form.svg"
-                alt="WasteWorth Form custom recycled plastic trophy, planter, and architectural nameplate"
+                src="/images/real/product-vase.jpg"
+                alt="Reclaimed vessel and planter crafted from recycled materials"
                 fill
+                sizes="(max-width: 1024px) 100vw, 42vw"
                 className="object-cover"
               />
             </div>
-
-            <div className="grid grid-cols-2 gap-3 text-xs text-ivory/80">
-              {FORM_PRODUCTS.map((item) => (
-                <div
-                  key={item}
-                  className="border border-gold/25 bg-teal-abyss/50 px-3.5 py-2.5"
-                >
-                  {item}
-                </div>
-              ))}
-            </div>
           </div>
 
-          {/* Right Bulk Enquiry Form */}
           <div className="lg:col-span-7 border border-gold/35 bg-ivory text-ink p-6 sm:p-10">
             {referenceNumber ? (
               <div className="py-10 text-center space-y-5">
                 <div className="w-12 h-12 mx-auto bg-teal-deep text-gold-light flex items-center justify-center">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-gold-dark">
-                  WasteWorth Form Enquiry Logged
+                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-gold-dark">
+                  Décor Enquiry Saved
                 </p>
                 <h3 className="font-serif text-3xl text-teal-abyss">
                   Thank you, {organizationName}.
@@ -165,8 +165,8 @@ export function WasteWorthFormSection() {
                   </span>
                 </div>
                 <p className="text-sm text-slate max-w-md mx-auto leading-relaxed">
-                  Our B2B studio desk will review your quantity, logo, and
-                  material direction and respond with a tailored proposal.
+                  Our studio desk will review your quantity, logo, and design
+                  preferences and respond with a tailored quote.
                 </p>
                 <button
                   type="button"
@@ -175,6 +175,7 @@ export function WasteWorthFormSection() {
                     setOrganizationName('');
                     setApproximateQuantity('');
                     setDesignPreferences('');
+                    setSpecialInstructions('');
                   }}
                   className="border border-teal-deep px-6 py-2.5 text-xs uppercase tracking-[0.2em] text-teal-deep hover:bg-teal-deep hover:text-ivory"
                 >
@@ -184,11 +185,8 @@ export function WasteWorthFormSection() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="border-b border-gold/25 pb-4">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.26em] text-gold-dark">
-                    Institutional &amp; Bulk Commission
-                  </p>
-                  <h3 className="font-serif text-3xl text-teal-abyss mt-1">
-                    Request a WasteWorth Form Proposal
+                  <h3 className="font-serif text-3xl text-teal-abyss">
+                    Request a Custom Décor Quote
                   </h3>
                 </div>
 
@@ -196,9 +194,9 @@ export function WasteWorthFormSection() {
                   <div>
                     <label
                       htmlFor="orgName"
-                      className="block font-mono text-[10px] uppercase tracking-[0.2em] text-teal-deep mb-1.5"
+                      className="block font-mono text-[10px] uppercase tracking-[0.18em] text-teal-deep mb-1.5"
                     >
-                      Organization / University *
+                      Organization / Institution *
                     </label>
                     <input
                       id="orgName"
@@ -206,14 +204,14 @@ export function WasteWorthFormSection() {
                       value={organizationName}
                       onChange={(e) => setOrganizationName(e.target.value)}
                       placeholder="National Institute of Design"
-                      className="w-full border border-gold/40 bg-cream px-3.5 py-2.5 text-sm focus:outline-none focus:border-teal-deep"
+                      className="w-full border border-teal-deep/25 bg-cream px-3.5 py-2.5 text-sm"
                     />
                   </div>
 
                   <div>
                     <label
                       htmlFor="formProductType"
-                      className="block font-mono text-[10px] uppercase tracking-[0.2em] text-teal-deep mb-1.5"
+                      className="block font-mono text-[10px] uppercase tracking-[0.18em] text-teal-deep mb-1.5"
                     >
                       Product Type *
                     </label>
@@ -221,7 +219,7 @@ export function WasteWorthFormSection() {
                       id="formProductType"
                       value={productType}
                       onChange={(e) => setProductType(e.target.value)}
-                      className="w-full border border-gold/40 bg-cream px-3.5 py-2.5 text-sm focus:outline-none focus:border-teal-deep"
+                      className="w-full border border-teal-deep/25 bg-cream px-3.5 py-2.5 text-sm"
                     >
                       {FORM_PRODUCTS.map((p) => (
                         <option key={p} value={p}>
@@ -234,9 +232,9 @@ export function WasteWorthFormSection() {
                   <div>
                     <label
                       htmlFor="approxQty"
-                      className="block font-mono text-[10px] uppercase tracking-[0.2em] text-teal-deep mb-1.5"
+                      className="block font-mono text-[10px] uppercase tracking-[0.18em] text-teal-deep mb-1.5"
                     >
-                      Approximate Quantity *
+                      Quantity *
                     </label>
                     <input
                       id="approxQty"
@@ -244,14 +242,14 @@ export function WasteWorthFormSection() {
                       value={approximateQuantity}
                       onChange={(e) => setApproximateQuantity(e.target.value)}
                       placeholder="e.g., 25 units"
-                      className="w-full border border-gold/40 bg-cream px-3.5 py-2.5 text-sm focus:outline-none focus:border-teal-deep"
+                      className="w-full border border-teal-deep/25 bg-cream px-3.5 py-2.5 text-sm"
                     />
                   </div>
 
                   <div>
                     <label
                       htmlFor="budgetRange"
-                      className="block font-mono text-[10px] uppercase tracking-[0.2em] text-teal-deep mb-1.5"
+                      className="block font-mono text-[10px] uppercase tracking-[0.18em] text-teal-deep mb-1.5"
                     >
                       Budget Range (Optional)
                     </label>
@@ -261,56 +259,56 @@ export function WasteWorthFormSection() {
                       value={budgetRange}
                       onChange={(e) => setBudgetRange(e.target.value)}
                       placeholder="e.g., ₹25,000 – ₹60,000"
-                      className="w-full border border-gold/40 bg-cream px-3.5 py-2.5 text-sm focus:outline-none focus:border-teal-deep"
+                      className="w-full border border-teal-deep/25 bg-cream px-3.5 py-2.5 text-sm"
                     />
                   </div>
                 </div>
 
                 <div>
                   <label
-                    htmlFor="colourPrefForm"
-                    className="block font-mono text-[10px] uppercase tracking-[0.2em] text-teal-deep mb-1.5"
+                    htmlFor="designPrefForm"
+                    className="block font-mono text-[10px] uppercase tracking-[0.18em] text-teal-deep mb-1.5"
                   >
-                    Colour &amp; Material Preferences
+                    Design &amp; Colour Preferences
                   </label>
                   <input
-                    id="colourPrefForm"
+                    id="designPrefForm"
                     type="text"
-                    value={colourPreferences}
-                    onChange={(e) => setColourPreferences(e.target.value)}
-                    className="w-full border border-gold/40 bg-cream px-3.5 py-2.5 text-sm focus:outline-none focus:border-teal-deep"
+                    value={designPreferences}
+                    onChange={(e) => setDesignPreferences(e.target.value)}
+                    placeholder={colourPreferences}
+                    className="w-full border border-teal-deep/25 bg-cream px-3.5 py-2.5 text-sm"
                   />
                 </div>
 
                 <div>
                   <label
-                    htmlFor="designPrefForm"
-                    className="block font-mono text-[10px] uppercase tracking-[0.2em] text-teal-deep mb-1.5"
+                    htmlFor="specialInstForm"
+                    className="block font-mono text-[10px] uppercase tracking-[0.18em] text-teal-deep mb-1.5"
                   >
-                    Design Notes &amp; Dimensions
+                    Special Instructions
                   </label>
                   <textarea
-                    id="designPrefForm"
+                    id="specialInstForm"
                     rows={2}
-                    value={designPreferences}
-                    onChange={(e) => setDesignPreferences(e.target.value)}
-                    placeholder="Event timeline, mounting requirements, engraving details..."
-                    className="w-full border border-gold/40 bg-cream px-3.5 py-2.5 text-sm focus:outline-none focus:border-teal-deep"
+                    value={specialInstructions}
+                    onChange={(e) => setSpecialInstructions(e.target.value)}
+                    placeholder="Dimensions, delivery timeline, engraving notes..."
+                    className="w-full border border-teal-deep/25 bg-cream px-3.5 py-2.5 text-sm"
                   />
                 </div>
 
-                {/* Logo Upload */}
                 <div>
-                  <span className="block font-mono text-[10px] uppercase tracking-[0.2em] text-teal-deep mb-1.5">
-                    Institution / Brand Logo (Optional)
+                  <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-teal-deep mb-1.5">
+                    Logo Upload (Optional, stored privately)
                   </span>
                   <div className="flex items-center gap-4">
-                    <label className="inline-flex items-center gap-2 border border-teal-deep/40 bg-cream px-4 py-2 text-xs uppercase tracking-[0.18em] cursor-pointer hover:bg-travertine">
+                    <label className="inline-flex items-center gap-2 border border-teal-deep/35 bg-cream px-4 py-2 text-xs uppercase tracking-[0.16em] cursor-pointer hover:bg-travertine">
                       <Upload className="w-3.5 h-3.5" />
                       {logoName ? 'Change Logo' : 'Upload Logo'}
                       <input
                         type="file"
-                        accept="image/*"
+                        accept="image/jpeg,image/png,image/webp"
                         onChange={handleLogoChange}
                         className="hidden"
                       />
@@ -321,7 +319,7 @@ export function WasteWorthFormSection() {
                         <button
                           type="button"
                           onClick={() => {
-                            setLogoDataUrl(undefined);
+                            setLogoPath(undefined);
                             setLogoName(undefined);
                           }}
                           aria-label="Remove organization logo"
@@ -337,37 +335,37 @@ export function WasteWorthFormSection() {
                   <div>
                     <label
                       htmlFor="formContactName"
-                      className="block font-mono text-[10px] uppercase tracking-[0.2em] text-teal-deep mb-1.5"
+                      className="block font-mono text-[10px] uppercase tracking-[0.18em] text-teal-deep mb-1.5"
                     >
-                      Contact Name *
+                      Customer Name *
                     </label>
                     <input
                       id="formContactName"
                       type="text"
                       value={contactName}
                       onChange={(e) => setContactName(e.target.value)}
-                      className="w-full border border-gold/40 bg-cream px-3.5 py-2.5 text-sm focus:outline-none focus:border-teal-deep"
+                      className="w-full border border-teal-deep/25 bg-cream px-3.5 py-2.5 text-sm"
                     />
                   </div>
                   <div>
                     <label
                       htmlFor="formEmail"
-                      className="block font-mono text-[10px] uppercase tracking-[0.2em] text-teal-deep mb-1.5"
+                      className="block font-mono text-[10px] uppercase tracking-[0.18em] text-teal-deep mb-1.5"
                     >
-                      Official Email *
+                      Email *
                     </label>
                     <input
                       id="formEmail"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full border border-gold/40 bg-cream px-3.5 py-2.5 text-sm focus:outline-none focus:border-teal-deep"
+                      className="w-full border border-teal-deep/25 bg-cream px-3.5 py-2.5 text-sm"
                     />
                   </div>
                   <div>
                     <label
                       htmlFor="formPhone"
-                      className="block font-mono text-[10px] uppercase tracking-[0.2em] text-teal-deep mb-1.5"
+                      className="block font-mono text-[10px] uppercase tracking-[0.18em] text-teal-deep mb-1.5"
                     >
                       Phone *
                     </label>
@@ -376,13 +374,13 @@ export function WasteWorthFormSection() {
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="w-full border border-gold/40 bg-cream px-3.5 py-2.5 text-sm focus:outline-none focus:border-teal-deep"
+                      className="w-full border border-teal-deep/25 bg-cream px-3.5 py-2.5 text-sm"
                     />
                   </div>
                   <div>
                     <label
                       htmlFor="formCity"
-                      className="block font-mono text-[10px] uppercase tracking-[0.2em] text-teal-deep mb-1.5"
+                      className="block font-mono text-[10px] uppercase tracking-[0.18em] text-teal-deep mb-1.5"
                     >
                       City
                     </label>
@@ -391,13 +389,16 @@ export function WasteWorthFormSection() {
                       type="text"
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
-                      className="w-full border border-gold/40 bg-cream px-3.5 py-2.5 text-sm focus:outline-none focus:border-teal-deep"
+                      className="w-full border border-teal-deep/25 bg-cream px-3.5 py-2.5 text-sm"
                     />
                   </div>
                 </div>
 
                 {errorMsg && (
-                  <div className="flex items-center gap-2 border border-red-700/30 bg-red-50 px-3.5 py-2.5 text-xs text-red-900">
+                  <div
+                    role="alert"
+                    className="flex items-center gap-2 border border-red-700/30 bg-red-50 px-3.5 py-2.5 text-xs text-red-900"
+                  >
                     <AlertCircle className="w-4 h-4 shrink-0" />
                     {errorMsg}
                   </div>
@@ -406,7 +407,7 @@ export function WasteWorthFormSection() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-teal-deep text-ivory py-4 text-xs uppercase tracking-[0.24em] font-semibold hover:bg-gold hover:text-teal-abyss transition-colors disabled:opacity-60"
+                  className="w-full bg-teal-deep text-ivory py-4 text-xs uppercase tracking-[0.22em] font-semibold hover:bg-gold hover:text-teal-abyss transition-colors disabled:opacity-60"
                 >
                   {submitting
                     ? 'Sending Enquiry...'

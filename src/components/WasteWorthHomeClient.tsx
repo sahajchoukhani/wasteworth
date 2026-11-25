@@ -1,40 +1,52 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { AtelierPreloader } from './AtelierPreloader';
-import { ScrollProgressBar } from './ScrollProgressBar';
+import { ScrollController } from './ScrollController';
 import { CustomCursor } from './CustomCursor';
 import { Navbar } from './Navbar';
-import { HeroSection } from './HeroSection';
-import { KineticMarquee } from './KineticMarquee';
+import { WorthTunnelSection } from './WorthTunnelSection';
 import { CollectionSection } from './CollectionSection';
-import { WasteWizardSection } from './WasteWizardSection';
+import {
+  WasteWizardSection,
+  PreselectedProductTrigger,
+} from './WasteWizardSection';
 import { WasteWorthFormSection } from './WasteWorthFormSection';
 import { ProcessSection } from './ProcessSection';
 import { LoopSection } from './LoopSection';
 import { StorySection } from './StorySection';
 import { Footer } from './Footer';
+import { ProductItem } from '@/types/wasteworth';
 
-export function WasteWorthHomeClient() {
-  const [selectedWizardProduct, setSelectedWizardProduct] = useState<
-    string | null
-  >(null);
+interface WasteWorthHomeClientProps {
+  initialProducts: ProductItem[];
+}
+
+export function WasteWorthHomeClient({
+  initialProducts,
+}: WasteWorthHomeClientProps) {
+  const [preselected, setPreselected] =
+    useState<PreselectedProductTrigger | null>(null);
+  const seqRef = useRef(0);
+
+  const handleCustomizeProduct = (productType: string) => {
+    seqRef.current += 1;
+    setPreselected({ product: productType, seq: seqRef.current });
+  };
 
   return (
     <>
       <AtelierPreloader />
-      <ScrollProgressBar />
+      <ScrollController />
       <CustomCursor />
       <Navbar />
       <main className="flex-1">
-        <HeroSection />
-        <KineticMarquee />
+        <WorthTunnelSection products={initialProducts} />
         <CollectionSection
-          onCustomizeProduct={(productType) =>
-            setSelectedWizardProduct(productType)
-          }
+          products={initialProducts}
+          onCustomizeProduct={handleCustomizeProduct}
         />
-        <WasteWizardSection preselectedProduct={selectedWizardProduct} />
+        <WasteWizardSection preselected={preselected} />
         <WasteWorthFormSection />
         <ProcessSection />
         <LoopSection />
