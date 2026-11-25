@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 960" fill="none">
+  <defs>
+    <linearGradient id="bgKey" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F7F1E7"/>
+      <stop offset="100%" stop-color="#E3D7C3"/>
+    </linearGradient>
+    <linearGradient id="keyGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F2D997"/>
+      <stop offset="50%" stop-color="#C69D52"/>
+      <stop offset="100%" stop-color="#876121"/>
+    </linearGradient>
+    <linearGradient id="keyTeal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1E7188"/>
+      <stop offset="60%" stop-color="#0B3948"/>
+      <stop offset="100%" stop-color="#06212A"/>
+    </linearGradient>
+    <filter id="keyShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="16" dy="26" stdDeviation="18" flood-color="#092C38" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <rect width="800" height="960" fill="url(#bgKey)"/>
+  <g filter="url(#keyShadow)" transform="translate(210, 140)">
+    <!-- Split keyring -->
+    <circle cx="190" cy="110" r="68" stroke="url(#keyGold)" stroke-width="14" fill="none"/>
+    <circle cx="190" cy="110" r="56" stroke="#876121" stroke-width="1.5" stroke-opacity="0.5" fill="none"/>
+    <!-- Clasp -->
+    <rect x="174" y="176" width="32" height="58" rx="12" fill="url(#keyGold)"/>
+    <!-- Dual-leaf fob -->
+    <path d="M190 230 C280 295 305 450 190 580 C75 450 100 295 190 230 Z" fill="url(#keyTeal)" stroke="url(#keyGold)" stroke-width="5"/>
+    <!-- Gold half-leaf accent -->
+    <path d="M190 245 C255 300 270 420 190 555 Z" fill="url(#keyGold)" fill-opacity="0.32"/>
+    <!-- Marbled veins -->
+    <path d="M125 360 Q180 330 245 390" stroke="#5CB4C7" stroke-width="4" stroke-opacity="0.4" fill="none"/>
+    <path d="M135 440 Q195 470 250 420" stroke="#DFBD69" stroke-width="2.5" stroke-opacity="0.65" fill="none"/>
+    <line x1="190" y1="245" x2="190" y2="560" stroke="url(#keyGold)" stroke-width="3"/>
+  </g>
+</svg>

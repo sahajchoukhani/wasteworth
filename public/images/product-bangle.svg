@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 960" fill="none">
+  <defs>
+    <linearGradient id="bgBang" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F5EFE5"/>
+      <stop offset="100%" stop-color="#E4D8C4"/>
+    </linearGradient>
+    <linearGradient id="cuffTeal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1E6D83"/>
+      <stop offset="50%" stop-color="#0C3B4B"/>
+      <stop offset="100%" stop-color="#07222B"/>
+    </linearGradient>
+    <linearGradient id="cuffGold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#8A6424"/>
+      <stop offset="35%" stop-color="#E7C97E"/>
+      <stop offset="65%" stop-color="#C69D52"/>
+      <stop offset="100%" stop-color="#F3DC9E"/>
+    </linearGradient>
+    <filter id="bangShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="16" dy="28" stdDeviation="20" flood-color="#092C38" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <rect width="800" height="960" fill="url(#bgBang)"/>
+  <rect x="110" y="640" width="580" height="320" fill="#DCD0BC"/>
+  <line x1="110" y1="640" x2="690" y2="640" stroke="#C69D52" stroke-opacity="0.4"/>
+  <ellipse cx="400" cy="642" rx="190" ry="24" fill="#092C38" fill-opacity="0.16"/>
+  <g filter="url(#bangShadow)">
+    <!-- Architectural Cuff -->
+    <path d="M220 420 C220 280 580 280 580 420 L580 540 C580 635 220 635 220 540 Z" fill="url(#cuffTeal)"/>
+    <!-- Swirl veins -->
+    <path d="M235 445 Q340 400 430 465 T565 440" stroke="#EFE7DA" stroke-width="9" stroke-opacity="0.35" fill="none"/>
+    <path d="M230 505 Q360 555 470 490 T570 525" stroke="#4CA4B8" stroke-width="6" stroke-opacity="0.4" fill="none"/>
+    <path d="M240 475 Q400 520 560 470" stroke="#DFBD69" stroke-width="2.5" stroke-opacity="0.65" fill="none"/>
+    <!-- Top opening & gold inner rim -->
+    <ellipse cx="400" cy="405" rx="180" ry="72" fill="#EDE4D5" stroke="url(#cuffGold)" stroke-width="10"/>
+    <ellipse cx="400" cy="405" rx="154" ry="56" fill="#DDD0BC"/>
+    <!-- Bottom gold edge -->
+    <path d="M220 540 C220 635 580 635 580 540" stroke="url(#cuffGold)" stroke-width="7" fill="none"/>
+  </g>
+</svg>

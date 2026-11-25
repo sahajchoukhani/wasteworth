@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+:root {
+  --ww-ivory: #F6F1E7;
+  --ww-travertine: #EDE5D7;
+  --ww-cream: #FAF7F2;
+  --ww-teal-abyss: #07222B;
+  --ww-teal-deep: #0B3948;
+  --ww-teal-mid: #145366;
+  --ww-gold: #C69D52;
+  --ww-gold-light: #E2C37D;
+  --ww-gold-dark: #8A6525;
+  --ww-ink: #121B1F;
+  --ww-slate: #526066;
+}
+
+@theme inline {
+  --color-ivory: var(--ww-ivory);
+  --color-travertine: var(--ww-travertine);
+  --color-cream: var(--ww-cream);
+  --color-teal-abyss: var(--ww-teal-abyss);
+  --color-teal-deep: var(--ww-teal-deep);
+  --color-teal-mid: var(--ww-teal-mid);
+  --color-gold: var(--ww-gold);
+  --color-gold-light: var(--ww-gold-light);
+  --color-gold-dark: var(--ww-gold-dark);
+  --color-ink: var(--ww-ink);
+  --color-slate: var(--ww-slate);
+  --font-serif: var(--font-cormorant), Georgia, serif;
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-mono: var(--font-space-mono), monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--ww-ivory);
+  color: var(--ww-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background-color: var(--ww-ivory);
+  color: var(--ww-ink);
+  font-family: var(--font-manrope), system-ui, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: #0B3948;
+  color: #F6F1E7;
+}
+
+/* Subtle natural paper/stone grain overlay */
+.ww-grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Gold hairline divider */
+.ww-hairline-gold {
+  background: linear-gradient(90deg, transparent, rgba(198, 157, 82, 0.55), transparent);
+  height: 1px;
+}
+
+/* Marbled surface accent */
+.ww-marble-panel {
+  background:
+    radial-gradient(circle at 18% 22%, rgba(20, 83, 102, 0.16), transparent 55%),
+    radial-gradient(circle at 82% 76%, rgba(198, 157, 82, 0.14), transparent 50%),
+    linear-gradient(135deg, #07222B 0%, #0B3948 52%, #0E4557 100%);
+}

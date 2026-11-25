@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 960" fill="none">
+  <defs>
+    <linearGradient id="bgEar" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F7F2E9"/>
+      <stop offset="100%" stop-color="#E5DAC7"/>
+    </linearGradient>
+    <linearGradient id="goldWire" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F3DA99"/>
+      <stop offset="50%" stop-color="#C69D52"/>
+      <stop offset="100%" stop-color="#8A6424"/>
+    </linearGradient>
+    <linearGradient id="tealPetal1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#227B94" stop-opacity="0.92"/>
+      <stop offset="55%" stop-color="#0E4456" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#072732"/>
+    </linearGradient>
+    <filter id="earShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="14" dy="26" stdDeviation="18" flood-color="#092C38" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <rect width="800" height="960" fill="url(#bgEar)"/>
+  <!-- Limestone step -->
+  <rect x="0" y="700" width="800" height="260" fill="#DFD3BF"/>
+  <line x1="0" y1="700" x2="800" y2="700" stroke="#C69D52" stroke-opacity="0.3"/>
+  <!-- Left Earring -->
+  <g filter="url(#earShadow)" transform="translate(260, 210)">
+    <path d="M35 0 C35 -30 75 -30 75 5 C75 40 55 70 55 100" stroke="url(#goldWire)" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <circle cx="55" cy="106" r="7" fill="url(#goldWire)"/>
+    <!-- Dual leaf drop -->
+    <path d="M55 115 C115 175 125 295 55 375 C-15 295 -5 175 55 115 Z" fill="url(#tealPetal1)" stroke="url(#goldWire)" stroke-width="3"/>
+    <path d="M55 135 C78 190 78 275 55 350" stroke="#DFBD69" stroke-width="2" stroke-opacity="0.6" fill="none"/>
+    <path d="M22 230 Q55 210 88 250" stroke="#64B8CA" stroke-width="3" stroke-opacity="0.35" fill="none"/>
+    <path d="M55 160 C82 195 85 245 55 280 Z" fill="url(#goldWire)" fill-opacity="0.25"/>
+  </g>
+  <!-- Right Earring (slightly offset for editorial asymmetry) -->
+  <g filter="url(#earShadow)" transform="translate(430, 270)">
+    <path d="M35 0 C35 -30 75 -30 75 5 C75 40 55 70 55 100" stroke="url(#goldWire)" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <circle cx="55" cy="106" r="7" fill="url(#goldWire)"/>
+    <path d="M55 115 C115 175 125 295 55 375 C-15 295 -5 175 55 115 Z" fill="url(#tealPetal1)" stroke="url(#goldWire)" stroke-width="3"/>
+    <path d="M55 135 C32 190 32 275 55 350" stroke="#DFBD69" stroke-width="2" stroke-opacity="0.6" fill="none"/>
+    <path d="M18 260 Q55 230 92 215" stroke="#64B8CA" stroke-width="3" stroke-opacity="0.35" fill="none"/>
+  </g>
+</svg>

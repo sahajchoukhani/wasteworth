@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 960" fill="none">
+  <defs>
+    <linearGradient id="stoneBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F6F0E6"/>
+      <stop offset="55%" stop-color="#EDE4D5"/>
+      <stop offset="100%" stop-color="#E2D6C3"/>
+    </linearGradient>
+    <linearGradient id="goldRim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F1D794"/>
+      <stop offset="35%" stop-color="#C69D52"/>
+      <stop offset="70%" stop-color="#8A6525"/>
+      <stop offset="100%" stop-color="#E4C378"/>
+    </linearGradient>
+    <linearGradient id="tealDeep" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1E6F86"/>
+      <stop offset="50%" stop-color="#0D3D4D"/>
+      <stop offset="100%" stop-color="#06222C"/>
+    </linearGradient>
+    <filter id="marble" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="4" seed="7" result="noise"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" in="noise" result="veins"/>
+      <feComposite in="SourceGraphic" in2="veins" operator="atop"/>
+    </filter>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="18" dy="34" stdDeviation="24" flood-color="#092C38" flood-opacity="0.22"/>
+    </filter>
+    <radialGradient id="sunlight" cx="0.25" cy="0.2" r="0.75">
+      <stop offset="0%" stop-color="#FFFDF8" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#FFFDF8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="960" fill="url(#stoneBg)"/>
+  <rect width="800" height="960" fill="url(#sunlight)"/>
+  <!-- Architectural travertine plinth -->
+  <polygon points="120,650 680,650 740,740 80,740" fill="#E6DBC9"/>
+  <rect x="80" y="740" width="660" height="220" fill="#DDD0BC"/>
+  <line x1="120" y1="650" x2="680" y2="650" stroke="#C69D52" stroke-opacity="0.35" stroke-width="1"/>
+  <!-- Diagonal architectural shadow -->
+  <polygon points="0,0 320,0 0,480" fill="#092C38" fill-opacity="0.04"/>
+  <!-- Ring Shadow -->
+  <ellipse cx="415" cy="655" rx="150" ry="26" fill="#092C38" fill-opacity="0.16"/>
+  <!-- Sculptural Signet Ring -->
+  <g filter="url(#softShadow)">
+    <!-- Outer band -->
+    <path d="M400 290 C520 290 590 385 590 480 C590 585 505 645 400 645 C295 645 210 585 210 480 C210 385 280 290 400 290 Z" fill="url(#tealDeep)"/>
+    <!-- Marbled veins overlay on ring -->
+    <path d="M250 430 Q330 390 400 440 T550 420" stroke="#4CA4B8" stroke-width="6" stroke-opacity="0.35" fill="none"/>
+    <path d="M235 510 Q340 550 430 495 T575 510" stroke="#DFBD69" stroke-width="2.5" stroke-opacity="0.55" fill="none"/>
+    <path d="M290 350 Q380 390 470 340" stroke="#EFE7DA" stroke-width="3" stroke-opacity="0.28" fill="none"/>
+    <!-- Inner cutout -->
+    <ellipse cx="400" cy="495" rx="115" ry="96" fill="#EDE4D5"/>
+    <!-- Gold inner bezel -->
+    <ellipse cx="400" cy="495" rx="115" ry="96" stroke="url(#goldRim)" stroke-width="10" fill="none"/>
+    <!-- Signet top plateau -->
+    <ellipse cx="400" cy="316" rx="96" ry="44" fill="#092C38" stroke="url(#goldRim)" stroke-width="5"/>
+    <!-- Gold leaf inlay on signet face -->
+    <path d="M400 286 C420 302 426 324 400 344 C374 324 380 302 400 286 Z" fill="url(#goldRim)" opacity="0.9"/>
+    <path d="M400 286 L400 344" stroke="#092C38" stroke-width="1.5"/>
+  </g>
+</svg>
