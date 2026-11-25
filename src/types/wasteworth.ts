@@ -1,9 +1,9 @@
 export type ProductCategory =
-  | 'Rings'
-  | 'Earrings'
-  | 'Bangles'
   | 'Keychains'
-  | 'WasteWorth Form';
+  | 'Earrings'
+  | 'Rings'
+  | 'Bangles'
+  | 'Vases';
 
 export interface ProductItem {
   id: string;
@@ -11,28 +11,31 @@ export interface ProductItem {
   name: string;
   category: ProductCategory;
   shortDescription: string;
-  editorialNote: string;
   materialUsed: string;
   customizationAvailable: string[];
   indicativePrice: string;
-  isQuoteOnly?: boolean;
   image: string;
-  tag: string;
-  featuredSpan?: 'tall' | 'wide' | 'standard';
+  isConceptRender?: boolean;
+  isActive: boolean;
+  displayOrder: number;
+  createdAt?: string;
 }
 
 export type RequestStatus =
-  | 'New'
-  | 'Under Review'
-  | 'Accepted'
-  | 'Rejected'
-  | 'Completed';
+  | 'NEW'
+  | 'UNDER_REVIEW'
+  | 'ACCEPTED'
+  | 'REJECTED'
+  | 'IN_PRODUCTION'
+  | 'COMPLETED';
 
 export interface UploadedImageItem {
   id: string;
   name: string;
   size: number;
-  dataUrl: string;
+  storagePath?: string;
+  dataUrl?: string;
+  signedUrl?: string;
 }
 
 export interface CustomCreationRequest {
@@ -41,7 +44,9 @@ export interface CustomCreationRequest {
   createdAt: string;
   updatedAt: string;
   status: RequestStatus;
-  internalNotes: string;
+  adminNotes: string;
+  estimatedPrice: number | null;
+  finalQuotedPrice: number | null;
   materials: string[];
   customMaterial: string;
   productType: string;
@@ -52,10 +57,12 @@ export interface CustomCreationRequest {
     pattern: string;
     size: string;
     personalText: string;
-    logoDataUrl?: string;
+    logoPath?: string;
+    logoSignedUrl?: string;
     logoName?: string;
     specialInstructions: string;
   };
+  uploadedImagePaths: string[];
   uploadedImages: UploadedImageItem[];
   customer: {
     fullName: string;
@@ -73,15 +80,17 @@ export interface DecorEnquiry {
   createdAt: string;
   updatedAt: string;
   status: RequestStatus;
-  internalNotes: string;
+  adminNotes: string;
   organizationName: string;
   productType: string;
   approximateQuantity: string;
-  logoDataUrl?: string;
+  logoPath?: string;
+  logoSignedUrl?: string;
   logoName?: string;
   colourPreferences: string;
   designPreferences: string;
   budgetRange: string;
+  specialInstructions: string;
   contactName: string;
   email: string;
   phone: string;
@@ -89,6 +98,7 @@ export interface DecorEnquiry {
 }
 
 export interface SubmissionsStore {
+  products: ProductItem[];
   requests: CustomCreationRequest[];
   decorEnquiries: DecorEnquiry[];
 }

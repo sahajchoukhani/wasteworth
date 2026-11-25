@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdminAuthenticated } from '@/lib/adminAuth';
+import { sanitizeText } from '@/lib/rateLimit';
 import { updateDecorEnquiry } from '@/lib/storage';
 import { RequestStatus } from '@/types/wasteworth';
 
 const VALID_STATUSES: RequestStatus[] = [
-  'New',
-  'Under Review',
-  'Accepted',
-  'Rejected',
-  'Completed',
+  'NEW',
+  'UNDER_REVIEW',
+  'ACCEPTED',
+  'REJECTED',
+  'IN_PRODUCTION',
+  'COMPLETED',
 ];
 
 export async function PATCH(
@@ -22,18 +24,18 @@ export async function PATCH(
 
   try {
     const { id } = await context.params;
-    const body = (await req.json()) as {
-      status?: RequestStatus;
-      internalNotes?: string;
-    };
+    const body = await req.json();
 
     if (body.status && !VALID_STATUSES.includes(body.status)) {
       return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
     }
 
-    const updated = updateDecorEnquiry(id, {
+    const updated = await updateDecorEnquiry(id, {
       status: body.status,
-      internalNotes: body.internalNotes,
+      adminNotes:
+        typeof body.adminNotes === 'string'
+          ? sanitizeText(body.adminNotes, 1000)
+          : undefined,
     });
 
     if (!updated) {

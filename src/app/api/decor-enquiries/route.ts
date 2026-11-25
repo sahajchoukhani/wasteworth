@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdminAuthenticated } from '@/lib/adminAuth';
+import { checkRateLimit, isValidEmail, sanitizeText } from '@/lib/rateLimit';
 import {
-  getStorageMode,
-  readStore,
+  getBackendMode,
+  listDecorEnquiriesWithSignedUrls,
   saveDecorEnquiry,
 } from '@/lib/storage';
 
@@ -10,28 +11,43 @@ export async function GET() {
   const authed = await isAdminAuthenticated();
   if (!authed) {
     return NextResponse.json(
-      { error: 'Unauthorized. Studio passcode required.' },
+      { error: 'Unauthorized. Administrator authentication required.' },
       { status: 401 }
     );
   }
-  const store = readStore();
+  const enquiries = await listDecorEnquiriesWithSignedUrls();
   return NextResponse.json({
-    enquiries: store.decorEnquiries,
-    storageMode: getStorageMode(),
+    enquiries,
+    backendMode: getBackendMode(),
   });
 }
 
 export async function POST(req: NextRequest) {
+  const limit = checkRateLimit(req, 'decor-enquiries', 10, 60_000);
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { error: `Rate limit reached. Please retry in ${limit.retryAfterSec}s.` },
+      { status: 429 }
+    );
+  }
+
   try {
     const body = await req.json();
 
+    const organizationName = sanitizeText(body.organizationName, 160);
+    const productType = sanitizeText(body.productType, 120);
+    const approximateQuantity = sanitizeText(body.approximateQuantity, 60);
+    const contactName = sanitizeText(body.contactName, 120);
+    const email = sanitizeText(body.email, 160);
+    const phone = sanitizeText(body.phone, 40);
+
     if (
-      !body.organizationName?.trim() ||
-      !body.productType?.trim() ||
-      !body.approximateQuantity?.trim() ||
-      !body.contactName?.trim() ||
-      !body.email?.trim() ||
-      !body.phone?.trim()
+      !organizationName ||
+      !productType ||
+      !approximateQuantity ||
+      !contactName ||
+      !isValidEmail(email) ||
+      phone.length < 7
     ) {
       return NextResponse.json(
         { error: 'Please complete all required organization and contact fields.' },
@@ -39,19 +55,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const saved = saveDecorEnquiry({
-      organizationName: body.organizationName.trim(),
-      productType: body.productType.trim(),
-      approximateQuantity: body.approximateQuantity.trim(),
-      logoDataUrl: body.logoDataUrl,
-      logoName: body.logoName,
-      colourPreferences: body.colourPreferences?.trim() || 'Teal & Champagne Gold',
-      designPreferences: body.designPreferences?.trim() || '',
-      budgetRange: body.budgetRange?.trim() || 'To be discussed',
-      contactName: body.contactName.trim(),
-      email: body.email.trim(),
-      phone: body.phone.trim(),
-      city: body.city?.trim() || '',
+    const saved = await saveDecorEnquiry({
+      organizationName,
+      productType,
+      approximateQuantity,
+      logoPath: sanitizeText(body.logoPath, 240) || undefined,
+      logoName: sanitizeText(body.logoName, 120) || undefined,
+      colourPreferences:
+        sanitizeText(body.colourPreferences, 160) || 'Deep Ocean Teal & Brass',
+      designPreferences: sanitizeText(body.designPreferences, 500),
+      budgetRange: sanitizeText(body.budgetRange, 100) || 'To be discussed',
+      specialInstructions: sanitizeText(body.specialInstructions, 500),
+      contactName,
+      email,
+      phone,
+      city: sanitizeText(body.city, 80),
     });
 
     return NextResponse.json(
@@ -59,13 +77,13 @@ export async function POST(req: NextRequest) {
         success: true,
         referenceNumber: saved.referenceNumber,
         enquiry: saved,
-        storageMode: getStorageMode(),
+        backendMode: getBackendMode(),
       },
       { status: 201 }
     );
   } catch {
     return NextResponse.json(
-      { error: 'Unable to submit enquiry. Please try again.' },
+      { error: 'Unable to submit enquiry. Please retry.' },
       { status: 500 }
     );
   }
